@@ -6,6 +6,45 @@ typedef struct TreeNode {
     struct TreeNode* left, * right;
 } TreeNode;
 
+typedef TreeNode* element;
+
+typedef struct StackNode {
+    element data;
+    struct StackNode* link;
+} StackNode;
+
+typedef struct {
+    StackNode* top;
+} LinkedStackType;
+
+void init(LinkedStackType* s) {
+    s->top = NULL;
+}
+
+int is_empty(LinkedStackType* s) {
+    return (s->top == NULL);
+}
+
+void push(LinkedStackType* s, element item) {
+    StackNode* temp = (StackNode*)malloc(sizeof(StackNode));
+    temp->data = item;
+    temp->link = s->top;
+    s->top = temp;
+    printf("push(%d) ", item->data);
+}
+
+element pop(LinkedStackType* s) {
+    if (is_empty(s)) return NULL;
+
+    StackNode* temp = s->top;
+    element data = temp->data;
+    s->top = temp->link;
+    free(temp);
+    printf("pop(%d) visit(%d)\n", data->data, data->data);
+
+    return data;
+}
+
 void PlaceNode(TreeNode* node, int direction, int data) {
     TreeNode* newNode = (TreeNode*)malloc(sizeof(TreeNode));
     newNode->data = data;
@@ -37,39 +76,81 @@ void GenerateLinkTree(TreeNode* root) {
     PlaceNode(root->right->right, 1, 15);
 }
 
-void LinkPreOrder(TreeNode* np) {
-    if (np != NULL) {
-        printf("%d ", np->data);
-        LinkPreOrder(np->left);
-        LinkPreOrder(np->right);
+void LinkPreOrder(TreeNode* root) {
+    LinkedStackType s;
+    TreeNode* nptr = root;
+
+    init(&s);
+
+    while (nptr != NULL || !is_empty(&s)) {
+        while (nptr != NULL) {
+            push(&s, nptr);
+            printf("visit(%d)\n", nptr->data);
+            nptr = nptr->left;
+        }
+
+        if (!is_empty(&s)) {
+            nptr = pop(&s);
+            nptr = nptr->right;
+        }
     }
 }
 
-void LinkInOrder(TreeNode* np) {
-    if (np == NULL) return;
-    
-    printf("push(%d) ", np->data);
-    LinkInOrder(np->left);
-    printf("pop(%d) visit(%d) ", np->data, np->data);
-    LinkInOrder(np->right);
-}
+void LinkInOrder(TreeNode* root) {
+    LinkedStackType s;
+    TreeNode* nptr = root;
 
-void LinkPostOrder(TreeNode* np) {
-    if (np != NULL) {
-        LinkPostOrder(np->left);
-        LinkPostOrder(np->right);
-        printf("%d ", np->data);
+    init(&s);
+
+    while (nptr != NULL || !is_empty(&s)) {
+        while (nptr != NULL) {
+            push(&s, nptr);
+            nptr = nptr->left;
+        }
+
+        nptr = pop(&s);
+
+        nptr = nptr->right;
     }
 }
 
-/*void LinkOrders(TreeNode* root) {
+void LinkPostOrder(TreeNode* root) {
+    LinkedStackType s;
+    TreeNode* nptr = root;
+    TreeNode* last_visited = NULL;
+
+    init(&s);
+
+    while (nptr != NULL || !is_empty(&s)) {
+        while (nptr != NULL) {
+            push(&s, nptr);
+            nptr = nptr->left;
+        }
+
+        TreeNode* top_node = s.top->data;
+
+        if (top_node->right == NULL || top_node->right == last_visited) {
+            pop(&s);
+            last_visited = top_node;
+        }
+        else {
+            nptr = top_node->right;
+        }
+    }
+    printf("\n");
+}
+
+void LinkOrders(TreeNode* root) {
+    printf("LinkedPreOrder : \n");
     LinkPreOrder(root); 
     printf("\n");
+    printf("LinkedInOrder : \n");
     LinkInOrder(root);
     printf("\n");
+    printf("LinkedPostOrder : \n");
     LinkPostOrder(root);
     printf("\n");
-}*/
+}
 
 int main()
 {
@@ -80,7 +161,6 @@ int main()
 
     //순회는 전위,중위,후위 모두 진행
     //이때 모든 push와 pop은 출력
-    //LinkOrders(root);
-    LinkInOrder(root);
+    LinkOrders(root);
     return 0;
 }
