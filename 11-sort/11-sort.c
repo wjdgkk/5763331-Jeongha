@@ -73,8 +73,7 @@ void doInsertionSort(int list[]) {
 	averageComparisons = totalComparisons / 20;
 
 	printf("Insertion Sort Compare Average : %d\n", averageComparisons);
-	printf("Insertion Sort Result : ");
-	
+	printf("Insertion Sort Result : \n");
 	print_list(list);
 }
 
@@ -100,8 +99,8 @@ void doBubbleSort(int list[]) {
 
 	averageSwaps = totalSwaps / 20;
 
-	printf("Bubble Sort Move Average: %d\n", averageSwaps);
-	printf("Bubble Sort: ");
+	printf("Bubble Sort Move Average : %d\n", averageSwaps);
+	printf("Bubble Sort Result : \n");
 	print_list(list);
 }
 
