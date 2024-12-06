@@ -1,3 +1,2 @@
 {Result Image}
-
 ![](.interpolationSearch1)
